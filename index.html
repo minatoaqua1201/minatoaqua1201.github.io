@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Karaoke</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="page-container">
+        <header>
+            <h1>YouTube Karaoke</h1>
+        </header>
+
+        <main class="main-content">
+            <div class="video-section">
+                <div class="video-player-container section-box">
+                    <h2>YouTube Video Player</h2>
+                    <div id="youtube-player"><!-- Player will be embedded here --></div>
+                </div>
+                <div class="controls-container section-box">
+                    <h2>Recording Controls</h2>
+                    <button id="startRecordBtn">Start Recording</button>
+                    <button id="stopRecordBtn" disabled>Stop Recording</button>
+                    <audio id="audioPlayback" controls></audio>
+                </div>
+            </div>
+
+            <div class="karaoke-section">
+                <div class="subtitles-container section-box">
+                    <h2>Subtitles/Transcript</h2>
+                    <div id="subtitles-display">
+                        <p>Subtitles will appear here...</p>
+                    </div>
+                </div>
+
+                <div class="stt-output-container section-box">
+                    <h2>Your Speech-to-Text Output</h2>
+                    <div id="stt-output">
+                        <p>Your transcribed speech will appear here...</p>
+                    </div>
+                </div>
+
+                <div class="score-container section-box">
+                    <h2>Comparison Score</h2>
+                    <div id="score-display">
+                        <p>Your score will be shown here...</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script src="script.js"></script>
+</body>
+</html>
