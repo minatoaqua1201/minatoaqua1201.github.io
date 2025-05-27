@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Karaoke App Unit Tests</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; background-color: #f4f4f4; }
+        #test-results { background-color: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        #test-results p { margin: 5px 0; padding: 8px; border-radius: 4px; }
+        .pass { color: #2ecc71; background-color: #eafaf1; }
+        .fail { color: #e74c3c; background-color: #fbecec; }
+        h2 { border-bottom: 1px solid #ddd; padding-bottom: 10px; margin-top: 30px; }
+    </style>
+</head>
+<body>
+    <h1>Karaoke App Unit Tests</h1>
+    <div id="test-results">
+        <!-- Test results will be appended here -->
+    </div>
+
+    <!-- Load the script containing the functions to be tested -->
+    <script src="script.js"></script>
+
+    <script>
+        // 3. Simple Assertion Function
+        function assertEquals(expected, actual, message) {
+            const resultsDiv = document.getElementById('test-results');
+            const p = document.createElement('p');
+            if (expected === actual) {
+                p.textContent = `PASS: ${message}`;
+                p.className = 'pass';
+            } else {
+                p.textContent = `FAIL: ${message}. Expected: ${expected}, Actual: ${actual}`;
+                p.className = 'fail';
+            }
+            resultsDiv.appendChild(p);
+            console.log(p.textContent); // Also log to console for convenience
+        }
+
+        // Test Suite
+        document.addEventListener('DOMContentLoaded', () => {
+            const resultsDiv = document.getElementById('test-results');
+
+            // --- Tests for calculateLevenshteinDistance ---
+            const distHeader = document.createElement('h2');
+            distHeader.textContent = 'Tests for calculateLevenshteinDistance';
+            resultsDiv.appendChild(distHeader);
+            console.group('Tests for calculateLevenshteinDistance');
+
+            assertEquals(0, calculateLevenshteinDistance("hello", "hello"), "Identical strings");
+            assertEquals(1, calculateLevenshteinDistance("apple", "apply"), "One substitution");
+            assertEquals(1, calculateLevenshteinDistance("apple", "axple"), "One substitution (middle)");
+            assertEquals(1, calculateLevenshteinDistance("ple", "apple"), "One insertion (to make 'apple') - or 2 deletions from 'apple'"); // distance("apple", "ple") -> 2 deletions
+            assertEquals(2, calculateLevenshteinDistance("apple", "ple"), "Two deletions from 'apple'");
+            assertEquals(1, calculateLevenshteinDistance("aple", "apple"), "One insertion");
+            assertEquals(1, calculateLevenshteinDistance("apple", "appl"), "One deletion");
+            assertEquals(3, calculateLevenshteinDistance("kitten", "sitting"), "Multiple changes (kitten -> sitten -> sittin -> sitting)");
+            assertEquals(7, calculateLevenshteinDistance("Sunday", "Saturday"), "Completely different (classic example)");
+            assertEquals(0, calculateLevenshteinDistance("", ""), "Both empty strings");
+            assertEquals(3, calculateLevenshteinDistance("abc", ""), "One string empty (abc vs '')");
+            assertEquals(3, calculateLevenshteinDistance("", "xyz"), "One string empty ('' vs xyz)");
+            assertEquals(0, calculateLevenshteinDistance("Hello", "hello"), "Case insensitivity");
+            assertEquals(0, calculateLevenshteinDistance("JavaScript", "javascript"), "Case insensitivity (multiple cases)");
+            assertEquals(1, calculateLevenshteinDistance("Book", "bookk"), "Case insensitivity with one insertion");
+
+
+            console.groupEnd();
+
+            // --- Tests for calculateScore ---
+            const scoreHeader = document.createElement('h2');
+            scoreHeader.textContent = 'Tests for calculateScore';
+            resultsDiv.appendChild(scoreHeader);
+            console.group('Tests for calculateScore');
+
+            assertEquals(100, calculateScore("hello", "hello"), "Identical strings score 100");
+            assertEquals(0, calculateScore("abc", "xyz"), "Completely different short strings score 0");
+            // For "apple" vs "apply", distance is 1, length is 5. Score = (1 - 1/5) * 100 = 80
+            assertEquals(80, calculateScore("apple", "apply"), "One substitution, score 80");
+            // For "kitten" vs "sitting", distance is 3, max_length is 7. Score = (1 - 3/7) * 100 = 57.14... -> 57
+            assertEquals(57, calculateScore("kitten", "sitting"), "Multiple changes, score 57");
+            assertEquals(0, calculateScore("short", "loooonger"), "Very different lengths, low score (distance 7, max_length 9 -> 22)");
+            assertEquals(22, calculateScore("short", "loooonger"), "Test: 'short' vs 'loooonger', score 22");
+
+
+            assertEquals(0, calculateScore("abc", ""), "One string empty, score 0 (originalText, empty userText)");
+            assertEquals(0, calculateScore("", "xyz"), "One string empty, score 0 (empty originalText, userText)");
+            assertEquals(100, calculateScore("", ""), "Both strings empty, score 100");
+            assertEquals(80, calculateScore("Apple", "apply"), "Case insensitivity in score (Apple vs apply)");
+            assertEquals(67, calculateScore("Test", "Testing"), "Score with insertion: Test vs Testing (dist 3, max_len 7 -> 57 - wait, dist is 3, max_len 7. (1-3/7)*100 = 57. My bad.)");
+            // "Test" vs "Testing": distance is 3 ("ing"). Max length is 7. (1 - 3/7) * 100 = 4/7 * 100 = 57.14... -> 57
+            assertEquals(57, calculateScore("Test", "Testing"), "Score Test vs Testing (dist 3, len 7 -> 57)");
+
+
+            console.groupEnd();
+        });
+    </script>
+</body>
+</html>
